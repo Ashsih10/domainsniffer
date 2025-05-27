@@ -1,4 +1,6 @@
-# domsniff
+![domsniff](https://github.com/user-attachments/assets/f7b7aee4-9742-46fb-8378-ab584ca467c8)
+# domsniff!
+
 
 A powerful Bash tool to **extract**, **filter**, and **clean** domains and subdomains from [crt.sh](https://crt.sh/) certificate transparency logs and any web url Built for OSINT, recon, and bug bounty hunters.
 
