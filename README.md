@@ -1,12 +1,12 @@
 # 🕵️‍♂️ domsniff
 
-A powerful Bash tool to **extract**, **filter**, and **clean** domains and subdomains from [crt.sh](https://crt.sh/) certificate transparency logs. Built for OSINT, recon, and bug bounty hunters.
+A powerful Bash tool to **extract**, **filter**, and **clean** domains and subdomains from [crt.sh](https://crt.sh/) certificate transparency logs and any web url Built for OSINT, recon, and bug bounty hunters.
 
 ---
 
 ## 📦 Features
 
-- 🔗 Accepts `https://crt.sh/?q=...` as input
+- 🔗 Accepts `https://crt.sh/?q=...` as input and any working web urls , eg shodan , censys
 - 📤 Output to a specified directory (`-o`)
 - 📁 Automatically names folders based on the domain (e.g., `google_output`)
 - 📄 Saves multiple stages of output (raw HTML, extracted, unique, cleaned, final)
@@ -43,11 +43,10 @@ sudo apt install wget grep sed coreutils
 ## 🚀 Installation
 
 ```bash
-git clone https://github.com/yourusername/domsniff.git
+git clone https://github.com/Ashsih10/domsniff.git
 cd domsniff
-chmod +x extract_domains.sh
+chmod +x domsniff.sh
 ```
-
 ---
 
 ## 🧪 Usage
