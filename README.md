@@ -53,14 +53,17 @@ sudo apt install wget grep sed coreutils
 ```bash
 git clone https://github.com/Ashsih10/domainsniffer.git
 cd domainsniffer
-chmod +x domainsniffer.sh
+chmod +x domainsniffer
 ```
 ---
+
+## next step
+sudo cp domainsniffer /opt (for accessing globally)
 
 ## 🧪 Usage
 
 ```bash
-./domainsniffer.sh [OPTIONS] <crt.sh URL>
+domainsniffer [OPTIONS] <crt.sh URL>
 ```
 
 ### 🧾 Examples
@@ -68,13 +71,13 @@ chmod +x domainsniffer.sh
 #### 🔍 Basic extraction
 
 ```bash
-./domainsniffer.sh 'https://crt.sh/?q=netflix'
+domainsniffer 'https://crt.sh/?q=netflix'
 ```
 
 #### 📂 Save output to custom directory
 
 ```bash
-./domainsniffer.sh -o ./results 'https://crt.sh/?q=google.com'
+domainsniffer -o ./results 'https://crt.sh/?q=google.com'
 ```
 
 #### 🎯 Base domain filtering
@@ -82,7 +85,7 @@ chmod +x domainsniffer.sh
 Only keep domains related to `google.com`:
 
 ```bash
-./domainsniffer.sh -b google.com 'https://crt.sh/?q=google.com'
+domainsniffer -b google.com 'https://crt.sh/?q=google.com'
 ```
 
 #### 🔎 Advanced wildcard filtering (removes the patterns and keep it in another file for reference)
@@ -90,19 +93,19 @@ Only keep domains related to `google.com`:
 Only subdomains of `google.com`:
 
 ```bash
-./domainsniffer.sh -f '*google.com' 'https://crt.sh/?q=google.com'
+domainsniffer -f '*google.com' 'https://crt.sh/?q=google.com'
 ```
 
 Subdomains and TLD variants:
 
 ```bash
-./domainsniffer.sh -f '*.google.com.*' 'https://crt.sh/?q=google.com'
+domainsniffer -f '*.google.com.*' 'https://crt.sh/?q=google.com'
 ```
 
 #### ℹ️ Help
 
 ```bash
-./domainsniffer.sh -h
+domainsniffer -h
 ```
 
 ---
@@ -137,5 +140,4 @@ google_output/
 ## 🧠 Author
 
 Developed with 🖤 by Ashish (https://github.com/Ashish10)
-
 
