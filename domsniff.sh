@@ -1,88 +1,155 @@
 #!/bin/bash
 
-function show_help() {
-  cat << EOF
-Usage: $0 <URL>
+# ---------------------------- #
+#      Domain Extractor       #
+#     From crt.sh with love   #
+# ---------------------------- #
 
-Downloads the content of the given URL, extracts domains and subdomains (including wildcards),
-removes duplicates, cleans wildcards, and saves the results in an output folder.
+# Requirements: bash, wget, grep, sed, sort, uniq
+timestamp=$(date +"%Y%m%d_%H%M%S")
 
-Example:
-  $0 "https://crt.sh/?q=netflix"
+# Default values
+output_dir="output"
+base_domain=""
+filter_pattern=""
+url=""
+show_help=0
+
+# Help message
+print_help() {
+  cat <<EOF
+Usage: ./extract_domains.sh [OPTIONS] <URL>
+
+Extracts domains and subdomains from crt.sh results.
 
 Options:
-  -h, --help    Show this help message and exit.
+  -o, --output DIR       Output directory (default: ./output)
+  -b, --base DOMAIN      Keep only domains/subdomains of this base (e.g. google.com)
+  -f, --filter PATTERN   Advanced filtering using wildcards (this removes pattern):
+                         google.com       → exact + subdomains
+                         *google.com      → only subdomains
+                         google.com.*     → TLD variants (e.g. .hk, .br)
+                         *.google.com.*   → subdomains + TLDs
+                         (all files will be saved as a seperate file so don't worry)
+  -h, --help             Show help
+
+Examples:
+  ./extract_domains.sh 'https://crt.sh/?q=netflix'
+  ./extract_domains.sh -o results -b google.com -f '*.google.com.*' 'https://crt.sh/?q=google.com'
 EOF
 }
 
-if [[ "$1" == "-h" || "$1" == "--help" ]]; then
-  show_help
+# Parse args
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -o|--output)
+      output_dir="$2"
+      shift 2
+      ;;
+    -b|--base)
+      base_domain="$2"
+      shift 2
+      ;;
+    -f|--filter)
+      filter_pattern="$2"
+      shift 2
+      ;;
+    -h|--help)
+      show_help=1
+      shift
+      ;;
+    *)
+      if [[ "$1" == http* ]]; then
+        url="$1"
+        shift
+      else
+        echo "Unknown option: $1"
+        exit 1
+      fi
+      ;;
+  esac
+done
+
+# Show help if requested or URL not provided
+if [[ $show_help -eq 1 || -z "$url" ]]; then
+  print_help
   exit 0
 fi
 
-if [ -z "$1" ]; then
-  echo "[-] Error: No URL provided."
-  show_help
+# Extract query from URL
+query=$(echo "$url" | grep -oP '(?<=\?q=)[^&]+')
+query_safe=$(echo "$query" | sed 's/[^a-zA-Z0-9.-]/_/g')
+
+# Final output directory
+final_output="$output_dir/$query_safe"
+mkdir -p "$final_output"
+
+# Output files
+raw_file="$final_output/raw_${timestamp}.txt"
+extracted_file="$final_output/domains_extracted_${timestamp}.txt"
+unique_file="$final_output/unique_domains_${timestamp}.txt"
+cleaned_file="$final_output/clean_domains_${timestamp}.txt"
+final_file="$final_output/final_domains_${timestamp}.txt"
+excluded_file="$final_output/excluded_domains_${timestamp}.txt"
+
+echo "[+] Downloading webpage..."
+wget -q -O "$raw_file" "$url"
+if [[ $? -eq 0 ]]; then
+  echo "[+] Download complete: $raw_file"
+else
+  echo "[-] Failed to download $url"
   exit 1
 fi
 
-URL="$1"
+echo "[+] Extracting domains..."
+grep -oE '\*?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' "$raw_file" > "$extracted_file"
+echo "[+] Domains extracted: $extracted_file"
 
-# Sanitize folder name: take domain or the whole URL replacing non-alphanumeric chars with _
-# Extract domain from URL, fallback to sanitized whole URL if fails
-DOMAIN=$(echo "$URL" | grep -oP '(?<=://)[^/]+')
-if [ -z "$DOMAIN" ]; then
-  DOMAIN=$(echo "$URL" | sed 's/[^a-zA-Z0-9]/_/g')
-fi
-
-OUTPUT_DIR="output_${DOMAIN}"
-mkdir -p "$OUTPUT_DIR"
-
-echo "[*] Downloading content from URL: $URL ..."
-OUTPUT_PREFIX="${OUTPUT_DIR}/output"
-
-wget -q -O "${OUTPUT_PREFIX}.txt" "$URL"
-if [ $? -ne 0 ]; then
-  echo "[-] Failed to download data from $URL"
-  exit 1
-fi
-echo "[+] Download done: ${OUTPUT_PREFIX}.txt"
-
-echo "[*] Extracting domains and subdomains (including wildcards)..."
-grep -oE '\*?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}' "${OUTPUT_PREFIX}.txt" > "${OUTPUT_PREFIX}_extracted.txt"
-count_extracted=$(wc -l < "${OUTPUT_PREFIX}_extracted.txt")
-echo "[+] Extracted $count_extracted domain entries: ${OUTPUT_PREFIX}_extracted.txt"
-
-echo "[*] Removing duplicates (first pass)..."
-count_before=$(wc -l < "${OUTPUT_PREFIX}_extracted.txt")
-sort "${OUTPUT_PREFIX}_extracted.txt" | uniq > "${OUTPUT_PREFIX}_unique.txt"
-count_after=$(wc -l < "${OUTPUT_PREFIX}_unique.txt")
-dups=$((count_before - count_after))
-
-if [ $dups -eq 0 ]; then
-  echo "[-] No duplicates found."
+echo "[+] Removing duplicates..."
+sort "$extracted_file" | uniq > "$unique_file"
+dups=$(( $(wc -l < "$extracted_file") - $(wc -l < "$unique_file") ))
+if [[ $dups -gt 0 ]]; then
+  echo "[+] Removed $dups duplicates"
 else
-  echo "[+] Removed $dups duplicate entries."
+  echo "[-] No duplicates found"
 fi
 
-echo "[*] Cleaning wildcard prefixes from domains..."
-sed 's/^\*\.\?//' "${OUTPUT_PREFIX}_unique.txt" > "${OUTPUT_PREFIX}_clean.txt"
-echo "[+] Wildcard prefixes removed."
+echo "[+] Cleaning wildcard prefixes..."
+sed 's/^\*\.\?//' "$unique_file" > "$cleaned_file"
+sort "$cleaned_file" | uniq > "$cleaned_file.tmp" && mv "$cleaned_file.tmp" "$cleaned_file"
 
-echo "[*] Removing duplicates again after cleaning wildcards..."
-count_before_clean=$(wc -l < "${OUTPUT_PREFIX}_clean.txt")
-sort "${OUTPUT_PREFIX}_clean.txt" | uniq > "${OUTPUT_PREFIX}_final.txt"
-count_after_clean=$(wc -l < "${OUTPUT_PREFIX}_final.txt")
-dups_clean=$((count_before_clean - count_after_clean))
+# Filtering logic
+if [[ -n "$base_domain" || -n "$filter_pattern" ]]; then
+  echo "[+] Applying filters..."
+  if [[ -n "$base_domain" ]]; then
+    grep -i "\(^\|\.\)$base_domain\$" "$cleaned_file" > "$final_file"
+    grep -vi "\(^\|\.\)$base_domain\$" "$cleaned_file" > "$excluded_file"
+    echo "[+] Kept only base domain: $base_domain"
+  fi
 
-if [ $dups_clean -eq 0 ]; then
-  echo "[-] No duplicates found after cleaning."
+  if [[ -n "$filter_pattern" ]]; then
+    # Build regex from filter pattern
+    regex=$(echo "$filter_pattern" | sed \
+      -e 's/\./\\./g' \
+      -e 's/\*/.*/g')
+
+    if [[ -s "$final_file" ]]; then
+      grep -iE "^$regex$" "$final_file" > "$final_file.tmp"
+      grep -viE "^$regex$" "$final_file" >> "$excluded_file"
+    else
+      grep -iE "^$regex$" "$cleaned_file" > "$final_file.tmp"
+      grep -viE "^$regex$" "$cleaned_file" >> "$excluded_file"
+    fi
+
+    mv "$final_file.tmp" "$final_file"
+    echo "[+] Applied pattern filter: $filter_pattern"
+  fi
 else
-  echo "[+] Removed $dups_clean duplicates after cleaning."
+  cp "$cleaned_file" "$final_file"
 fi
 
-echo ""
-echo "[✅] Process completed successfully."
-echo "[✅] All files saved in folder: $OUTPUT_DIR"
-echo "[✅] Final clean domain list: ${OUTPUT_PREFIX}_final.txt"
+echo "[+] Final domain list saved: $final_file"
+if [[ -s "$excluded_file" ]]; then
+  echo "[+] Excluded domains saved: $excluded_file"
+fi
 
