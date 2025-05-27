@@ -20,7 +20,7 @@ show_help=0
 # Help message
 print_help() {
   cat <<EOF
-Usage: ./extract_domains.sh [OPTIONS] <URL>
+Usage: ./domainsniffer.sh [OPTIONS] <URL>
 
 Extracts domains and subdomains from crt.sh results.
 
@@ -36,8 +36,8 @@ Options:
   -h, --help             Show help
 
 Examples:
-  ./extract_domains.sh 'https://crt.sh/?q=netflix'
-  ./extract_domains.sh -o results -b google.com -f '*.google.com.*' 'https://crt.sh/?q=google.com'
+  ./domainsniffer.sh 'https://crt.sh/?q=netflix'
+  ./domainsniffer.sh -o results -b google.com -f '*.google.com.*' 'https://crt.sh/?q=google.com'
 EOF
 }
 
