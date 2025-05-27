@@ -1,4 +1,3 @@
-````markdown
 # 🕵️‍♂️ domsniff
 
 A powerful Bash tool to **extract**, **filter**, and **clean** domains and subdomains from [crt.sh](https://crt.sh/) certificate transparency logs. Built for OSINT, recon, and bug bounty hunters.
@@ -132,5 +131,4 @@ google_output/
 
 Developed with 🖤 by Ashish (https://github.com/Ashish10)
 
-```
 
