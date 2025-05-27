@@ -77,7 +77,7 @@ Only keep domains related to `google.com`:
 ./extract_domains.sh -b google.com 'https://crt.sh/?q=google.com'
 ```
 
-#### 🔎 Advanced wildcard filtering
+#### 🔎 Advanced wildcard filtering (removes the patterns and keep it in another file for reference)
 
 Only subdomains of `google.com`:
 
