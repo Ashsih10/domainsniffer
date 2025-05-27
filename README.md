@@ -58,8 +58,9 @@ chmod +x domainsniffer
 ---
 
 ## next step
+```bash
 sudo cp domainsniffer /opt (for accessing globally)
-
+```
 ## 🧪 Usage
 
 ```bash
