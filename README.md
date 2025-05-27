@@ -1,27 +1,136 @@
-# 🕵️‍♂️ Domsniff
-# Domain and Subdomain extractor from URL WebPage
+````markdown
+# 🕵️‍♂️ domsniff
 
-This is a simple and powerful Bash tool to **extract domains and subdomains** (including wildcard entries) from any webpage, especially useful with sites like [crt.sh](https://crt.sh). It processes the content step-by-step, cleans the data, removes duplicates, and saves the final output in an organized folder.
-
----
-
-## 🚀 Features
-
-- Extracts domains and subdomains (e.g., `*.example.com`, `sub.domain.com`)
-- Automatically cleans wildcard prefixes
-- Removes duplicate entries (before and after cleaning)
-- Stores all intermediate and final output files in a dedicated folder
-- Supports any URL, not just `crt.sh`
-- Displays progress messages at every step
-- Includes a helpful `--help` section
+A powerful Bash tool to **extract**, **filter**, and **clean** domains and subdomains from [crt.sh](https://crt.sh/) certificate transparency logs. Built for OSINT, recon, and bug bounty hunters.
 
 ---
 
-## 📦 Installation
+## 📦 Features
 
-Clone this repository and make the script executable:
+- 🔗 Accepts `https://crt.sh/?q=...` as input
+- 📤 Output to a specified directory (`-o`)
+- 📁 Automatically names folders based on the domain (e.g., `google_output`)
+- 📄 Saves multiple stages of output (raw HTML, extracted, unique, cleaned, final)
+- 🧹 Removes wildcard prefixes like `*.` from domains
+- 🧼 Filters out non-matching domains/subdomains using:
+  - `--base` to keep only those matching a base domain
+  - `--filter` to apply advanced wildcard filtering:
+    - `google.com` → exact + subdomains
+    - `*google.com` → only subdomains
+    - `google.com.*` → TLD variants
+    - `*.google.com.*` → subdomains + TLDs
+- 📑 Excluded domains are saved for reference
+- 🆘 Help menu (`-h`) to guide usage
+- ✅ Verbose output of each step with `[+]`, `[-]` messages
+
+---
+
+## ⚙️ Requirements
+
+- `bash`
+- `wget`
+- `grep`
+- `sed`
+- `sort`, `uniq`
+
+Install them using:
 
 ```bash
-git clone https://github.com/Ashsih10/domsniff.git
+sudo apt install wget grep sed coreutils
+````
+
+---
+
+## 🚀 Installation
+
+```bash
+git clone https://github.com/yourusername/domsniff.git
 cd domsniff
-chmod +x domsniff.sh
+chmod +x extract_domains.sh
+```
+
+---
+
+## 🧪 Usage
+
+```bash
+./extract_domains.sh [OPTIONS] <crt.sh URL>
+```
+
+### 🧾 Examples
+
+#### 🔍 Basic extraction
+
+```bash
+./extract_domains.sh 'https://crt.sh/?q=netflix'
+```
+
+#### 📂 Save output to custom directory
+
+```bash
+./extract_domains.sh -o ./results 'https://crt.sh/?q=google.com'
+```
+
+#### 🎯 Base domain filtering
+
+Only keep domains related to `google.com`:
+
+```bash
+./extract_domains.sh -b google.com 'https://crt.sh/?q=google.com'
+```
+
+#### 🔎 Advanced wildcard filtering
+
+Only subdomains of `google.com`:
+
+```bash
+./extract_domains.sh -f '*google.com' 'https://crt.sh/?q=google.com'
+```
+
+Subdomains and TLD variants:
+
+```bash
+./extract_domains.sh -f '*.google.com.*' 'https://crt.sh/?q=google.com'
+```
+
+#### ℹ️ Help
+
+```bash
+./extract_domains.sh -h
+```
+
+---
+
+## ⚙️ Options
+
+| Option                   | Description                                                                                                                                                                          |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `-o`, `--output DIR`     | Output directory (default: `./output`)                                                                                                                                               |
+| `-b`, `--base DOMAIN`    | Keep only domains/subdomains of this base (e.g. `google.com`)                                                                                                                        |
+| `-f`, `--filter PATTERN` | Advanced filtering using wildcards:<br>`google.com` → exact + subdomains<br>`*google.com` → only subdomains<br>`google.com.*` → TLD variants<br>`*.google.com.*` → subdomains + TLDs |
+| `-h`, `--help`           | Show help                                                                                                                                                                            |
+
+---
+
+## 🧼 Output Structure
+
+Each run generates a time-stamped output directory like:
+
+```bash
+google_output/
+├── raw_YYYYMMDD_HHMMSS.txt                # Raw HTML from crt.sh
+├── domains_extracted_YYYYMMDD_HHMMSS.txt  # All extracted domains
+├── unique_domains_YYYYMMDD_HHMMSS.txt     # Unique domains
+├── clean_domains_YYYYMMDD_HHMMSS.txt      # Wildcards cleaned
+├── final_domains_YYYYMMDD_HHMMSS.txt      # Final cleaned output
+├── excluded_domains_YYYYMMDD_HHMMSS.txt   # Domains filtered out (optional)
+```
+
+---
+
+## 🧠 Author
+
+Developed with 🖤 by Ashish (https://github.com/Ashish10)
+
+```
+
