@@ -136,11 +136,11 @@ if [[ -n "$base_domain" || -n "$filter_pattern" ]]; then
       -e 's/\*/.*/g')
 
     if [[ -s "$final_file" ]]; then
-      grep -iE "^$regex$" "$final_file" > "$final_file.tmp"
-      grep -viE "^$regex$" "$final_file" >> "$excluded_file"
+      grep -viE "^$regex$" "$final_file" > "$final_file.tmp"
+      grep -iE "^$regex$" "$final_file" >> "$excluded_file"
     else
-      grep -iE "^$regex$" "$cleaned_file" > "$final_file.tmp"
-      grep -viE "^$regex$" "$cleaned_file" >> "$excluded_file"
+      grep -viE "^$regex$" "$cleaned_file" > "$final_file.tmp"
+      grep -iE "^$regex$" "$cleaned_file" >> "$excluded_file"
     fi
 
     mv "$final_file.tmp" "$final_file"
