@@ -9,6 +9,9 @@ A powerful Bash tool to **extract**, **filter**, and **clean** domains and subdo
 
 ---
 
+## Makers Note
+you went into a webpage , now you want to extract all the domains and subdomains from it. You use this tool , thats it . copy the web url put it in the tool , done.
+
 ## 📦 Features
 
 - 🔗 Accepts `https://crt.sh/?q=...` as input and any working web urls , eg shodan , censys
