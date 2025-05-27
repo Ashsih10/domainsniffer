@@ -6,6 +6,8 @@
 # ---------------------------- #
 
 # Requirements: bash, wget, grep, sed, sort, uniq
+
+figlet domainsniffer
 timestamp=$(date +"%Y%m%d_%H%M%S")
 
 # Default values
