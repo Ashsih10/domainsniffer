@@ -1,41 +1,27 @@
-# domsniff
+# 🕵️‍♂️ Domsniff
+# Domain and Subdomain extractor from URL WebPage
 
-# 🔍 Domain and Subdomain Extractor Tool from Any URL WebPage
-
-# 🛠️ Domain Extractor from crt.sh
-
-This script extracts, cleans, and filters domains from a `crt.sh` webpage.
+This is a simple and powerful Bash tool to **extract domains and subdomains** (including wildcard entries) from any webpage, especially useful with sites like [crt.sh](https://crt.sh). It processes the content step-by-step, cleans the data, removes duplicates, and saves the final output in an organized folder.
 
 ---
-## 📥 Installation
 
-Clone this repository:
+## 🚀 Features
+
+- Extracts domains and subdomains (e.g., `*.example.com`, `sub.domain.com`)
+- Automatically cleans wildcard prefixes
+- Removes duplicate entries (before and after cleaning)
+- Stores all intermediate and final output files in a dedicated folder
+- Supports any URL, not just `crt.sh`
+- Displays progress messages at every step
+- Includes a helpful `--help` section
+
+---
+
+## 📦 Installation
+
+Clone this repository and make the script executable:
 
 ```bash
-git clone https://github.com/Ashsih10/domsniff.git
+git clone https://github.com/your-username/domsniff.git
 cd domsniff
 chmod +x domsniff.sh
-
-## 📦 Features
-
-- Fetches raw HTML content from any `crt.sh` URL.
-- Extracts all domains and subdomains, including wildcards.
-- Cleans and deduplicates entries.
-- Filters by:
-  - Base domain (e.g. `google.com`)
-  - Wildcard-like filters (`*google.com`, `google.com.*`, etc.)
-- Saves filtered-out domains for future reference.
-- Fully compatible with Linux.
-
----
-
-## 🧪 Example
-
-```bash
-./extract_domains.sh -o results -b google.com -f '*.google.com.*' 'https://crt.sh/?q=google'
-
-
-
-
-
-
