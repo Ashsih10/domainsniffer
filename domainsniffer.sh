@@ -20,24 +20,24 @@ show_help=0
 # Help message
 print_help() {
   cat <<EOF
-Usage: ./domainsniffer.sh [OPTIONS] <URL>
+Usage: ./extract_domains.sh [OPTIONS] <URL>
 
-Extracts domains and subdomains from crt.sh results.
+Extracts domains and subdomains from crt.sh results and any other working URL webpage.
 
 Options:
   -o, --output DIR       Output directory (default: ./output)
   -b, --base DOMAIN      Keep only domains/subdomains of this base (e.g. google.com)
   -f, --filter PATTERN   Advanced filtering using wildcards (this removes pattern):
-                         google.com       → exact + subdomains
-                         *google.com      → only subdomains
-                         google.com.*     → TLD variants (e.g. .hk, .br)
-                         *.google.com.*   → subdomains + TLDs
+                         google.com       → removes exact + subdomains
+                         *google.com      → removes only subdomains
+                         google.com.*     → removes TLD variants (e.g. .hk, .br)
+                         *.google.com.*   → removes subdomains + TLDs
                          (all files will be saved as a seperate file so don't worry)
   -h, --help             Show help
 
 Examples:
-  ./domainsniffer.sh 'https://crt.sh/?q=netflix'
-  ./domainsniffer.sh -o results -b google.com -f '*.google.com.*' 'https://crt.sh/?q=google.com'
+  ./extract_domains.sh 'https://crt.sh/?q=netflix'
+  ./extract_domains.sh -o results -b google.com -f '*.google.com.*' 'https://crt.sh/?q=google.com'
 EOF
 }
 
