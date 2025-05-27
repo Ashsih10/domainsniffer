@@ -22,6 +22,6 @@ This is a simple and powerful Bash tool to **extract domains and subdomains** (i
 Clone this repository and make the script executable:
 
 ```bash
-git clone https://github.com/your-username/domsniff.git
+git clone https://github.com/Ashsih10/domsniff.git
 cd domsniff
 chmod +x domsniff.sh
