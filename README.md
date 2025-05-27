@@ -1,6 +1,6 @@
 # domsniff
 
-# 🔍 Domain Extractor Tool from Any URL
+# 🔍 Domain and Subdomain Extractor Tool from Any URL WebPage
 
 This is a simple Linux shell script that extracts all domain and subdomain names (including wildcards like `*.example.com`) from **any webpage URL**, cleans them, removes duplicates, and stores them in a neat folder for analysis or recon.
 
