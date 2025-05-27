@@ -32,6 +32,6 @@ This is a simple Linux shell script that extracts all domain and subdomain names
 Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/domain-extractor-tool.git
-cd domain-extractor-tool
-chmod +x extract_domains.sh
+git clone https://github.com/Ashsih10/domsniff.git
+cd domsniff
+chmod +x domsniff.sh
